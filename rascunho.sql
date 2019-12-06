@@ -27,6 +27,8 @@ SELECT * FROM log_salario;
 -- ---------- ---------------- ------------- -------- -------------
 --       5000             1100          1210 06/12/19 USER1        
 
+---------------------------------------------------------------------------------------------------------
+
 -- gatilho que verifica se o novo salário é maior que o salário mínimo
 CREATE OR REPLACE TRIGGER trg_salario_check
 AFTER UPDATE ON EMP
@@ -36,4 +38,16 @@ BEGIN
     IF :NEW.sal < 980 THEN
         RAISE_APPLICATION_ERROR(-20004, 'EMP.sal PRECISA SER MAIOR QUE O SALARIO MINIMO VIGENTE');
     END IF;
+END;
+
+-- criando copia da tabela emp que será atualizada automaticamente pelo BD a cada novo valor de emp
+CREATE VIEW view_emp AS SELECT * FROM EMP;
+
+-- criando gatilho que insere os campos obrigaórios na tabela emp para cada novo valor na view
+CREATE OR REPLACE TRIGGER trg_novo_func
+INSTEAD OF INSERT ON view_emp
+FOR EACH ROW
+BEGIN
+    INSERT INTO emp(empno, ename, sal)
+    VALUES (:NEW.empno, :NEW.ename, :NEW.sal);
 END;
