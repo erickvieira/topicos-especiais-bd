@@ -49,5 +49,5 @@ INSTEAD OF INSERT ON view_emp
 FOR EACH ROW
 BEGIN
     INSERT INTO emp(empno, ename, sal)
-    VALUES (:NEW.empno, :NEW.ename, :NEW.sal);
+    VALUES (:NEW.empno, UPPER(:NEW.ename), :NEW.sal);
 END;
