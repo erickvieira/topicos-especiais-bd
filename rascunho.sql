@@ -26,3 +26,14 @@ SELECT * FROM log_salario;
 --     CODIGO SALARIO_ANTERIOR SALARIO_ATUAL DATA_ALT USUARIO
 -- ---------- ---------------- ------------- -------- -------------
 --       5000             1100          1210 06/12/19 USER1        
+
+-- gatilho que verifica se o novo salário é maior que o salário mínimo
+CREATE OR REPLACE TRIGGER trg_salario_check
+AFTER UPDATE ON EMP
+REFERENCING NEW AS NEW OLD AS OLD
+FOR EACH ROW
+BEGIN
+    IF :NEW.sal < 980 THEN
+        RAISE_APPLICATION_ERROR(-20004, 'EMP.sal PRECISA SER MAIOR QUE O SALARIO MINIMO VIGENTE');
+    END IF;
+END;
